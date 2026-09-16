@@ -1,0 +1,18 @@
+# Monitoring — valida a interface publicada (Nginx / HTTPS)
+
+name: Monitorar aplicação
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    name: Health check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar frontend publicado
+        run: |
+          curl --fail --silent --show-error --max-time 20 \
+            "${{ vars.FRONTEND_URL }}"
