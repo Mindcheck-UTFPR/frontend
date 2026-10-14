@@ -1,0 +1,24 @@
+---
+description: Convenções do frontend React mobile-first
+globs: "**/*.{ts,tsx,css}"
+alwaysApply: false
+---
+
+# Frontend Mindcheck
+
+Este repositório só consome a API. Não calcule score de questionário aqui.
+
+```text
+src/app
+src/features/{auth,mood,questionnaires,dashboard,history}
+src/shared/{api,lib}
+src/shared/ui/{atoms,molecules,organisms,templates}
+```
+
+Design atômico: a página da feature monta o fluxo e chama a API. Peça visual reutilizável fica em `shared/ui`. Átomo não importa feature nem API. Feature não importa `@radix-ui`; usa o componente Mindcheck que envolve o primitivo. Radix cobre diálogo, menu, abas, popover e equivalentes. Botão e campo de texto simples continuam HTML estilizado. O visual (cor, tipo, toque no celular) é nosso.
+
+- Check-in em `mood` (rápido). Questionário em `questionnaires` (envia respostas, mostra faixa devolvida).
+- Estados obrigatórios: loading, vazio, erro, offline/cache, conteúdo extremo.
+- Sem diagnóstico, causalidade ou dado sensível persistido no dispositivo além do necessário para a sessão.
+- `VITE_API_URL` configura a API. Em produção só HTTPS.
+- Verificar a jornada no navegador antes de encerrar a tarefa.
