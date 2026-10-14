@@ -23,7 +23,7 @@ function QuestReviewContent({ questionnaireId }: { questionnaireId: string }) {
         </ul>
       )}
       <Link to={`/questionnaires/${questionnaireId}/result`}>
-         Finalizar questionário
+         Consultar resultado (em desenvolvimento)
       </Link>
     </div>
   )

@@ -1,20 +1,13 @@
-import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
 import BackButton from '../../components/navigation/back-button'
-import { useQuestionnaireDraft } from '../../hooks/use-questionnaire-draft'
 
 function QuestResultsContent({ questionnaireId }: { questionnaireId: string }) {
-  const { clearDraft } = useQuestionnaireDraft(questionnaireId)
-
-  useEffect(() => {
-    clearDraft()
-  }, [clearDraft])
-
   return (
     <div className="questionnaire-draft">
       <BackButton fallbackPath="/questionnaires" />
-      <p className="questionnaire-draft__status">Resultado concluído. O rascunho foi removido.</p>
+      <p className="questionnaire-draft__status">Resultado indisponível: o envio para a API ainda não foi implementado. Seu rascunho foi preservado.</p>
+      <p>Questionário: {questionnaireId}</p>
       <div>QuestResults</div>
     </div>
   )
