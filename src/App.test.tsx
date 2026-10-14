@@ -6,6 +6,6 @@ describe('App', () => {
   it('renders the bootstrap state', () => {
     render(<App />)
 
-    expect(screen.getByText('Onboarding')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Bem-vindo ao MindCheck!' })).toBeInTheDocument()
   })
 })

@@ -1,4 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
+import { sessionStore } from './features/auth/session'
 
 import CheckIn from './pages/checkin/checkin'
 import Dashboard from './pages/dashboard/dashboard'
@@ -26,6 +28,18 @@ import PublicLayout from './components/layouts/public-layout'
 import PrivateLayout from './components/layouts/private-layout'
 
 export function App() {
+  useEffect(() => {
+    void sessionStore.restore()
+    const verify = () => { if (document.visibilityState === 'visible') void sessionStore.verify() }
+    const interval = window.setInterval(verify, 60_000)
+    window.addEventListener('focus', verify)
+    document.addEventListener('visibilitychange', verify)
+    return () => {
+      window.clearInterval(interval)
+      window.removeEventListener('focus', verify)
+      document.removeEventListener('visibilitychange', verify)
+    }
+  }, [])
   return (
     <BrowserRouter>
       <Routes>
