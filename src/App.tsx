@@ -1,4 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { useEffect } from 'react'
+import { sessionStore } from './features/auth/session'
+import { LogoutButton } from './features/auth/logout-button'
 
 import { CheckinDiario } from './pages/checkin/checkinDiario'
 import { Painel } from './pages/dashboard/painel'
@@ -26,6 +29,20 @@ import { LayoutPublico } from './componentes/modelos/layoutPublico'
 import { LayoutPrivado } from './componentes/modelos/layoutPrivado'
 
 export function App() {
+  useEffect(() => {
+    void sessionStore.restore()
+    const verify = () => {
+      if (document.visibilityState === 'visible') void sessionStore.verify()
+    }
+    const interval = window.setInterval(verify, 60_000)
+    window.addEventListener('focus', verify)
+    document.addEventListener('visibilitychange', verify)
+    return () => {
+      window.clearInterval(interval)
+      window.removeEventListener('focus', verify)
+      document.removeEventListener('visibilitychange', verify)
+    }
+  }, [])
   return (
     <BrowserRouter>
       <Routes>
@@ -39,7 +56,7 @@ export function App() {
         </Route>
 
         <Route element={<RotaPrivada />}>
-          <Route element={<LayoutPrivado />}>
+          <Route element={<LayoutPrivado acaoConta={<LogoutButton />} />}>
             <Route path="/home" element={<Inicio />} />
 
             <Route path="/profile" element={<Perfil />} />

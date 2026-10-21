@@ -1,5 +1,1 @@
-const Cadastro = () => {
-  return <div>SignUp</div>
-}
-
-export { Cadastro }
+export { default as Cadastro } from '../../features/auth/signup-page'

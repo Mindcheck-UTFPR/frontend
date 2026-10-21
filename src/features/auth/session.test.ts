@@ -1,0 +1,144 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { createSessionStore, REFRESH_KEY } from './session'
+
+const user = { id: 1, nome: 'Conta de Teste', email: 'teste@example.test', papel: 'usuario' }
+const session = (letter = 'A') => ({
+  accessToken: `access-${letter}`,
+  refreshToken: letter.repeat(43),
+  expiraEm: '2099-01-01T00:00:00Z',
+  usuario: user,
+})
+const reply = (body: unknown, status = 200) =>
+  new Response(status === 204 ? null : JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  })
+const fetchMock = vi.fn<typeof fetch>()
+beforeEach(() => {
+  sessionStorage.clear()
+  localStorage.clear()
+  fetchMock.mockReset()
+  vi.stubGlobal('fetch', fetchMock)
+})
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
+
+describe('store de sessão', () => {
+  it('não autentica por token fictício no localStorage', async () => {
+    localStorage.setItem('token', 'inventado')
+    const store = createSessionStore()
+    await store.restore()
+    expect(store.getSnapshot().status).toBe('anonymous')
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+  it('login guarda só refresh no sessionStorage e nenhum dado pessoal/token de acesso', async () => {
+    fetchMock.mockResolvedValue(reply(session()))
+    const store = createSessionStore()
+    await store.login('  TESTE@EXAMPLE.TEST ', 'senha-exemplo')
+    expect(store.getSnapshot().user?.id).toBe(1)
+    expect(localStorage.length).toBe(0)
+    expect(sessionStorage.length).toBe(1)
+    expect(sessionStorage.getItem(REFRESH_KEY)).toBe('A'.repeat(43))
+    expect(fetchMock.mock.calls[0][1]?.body).toBe(
+      JSON.stringify({ email: 'teste@example.test', senha: 'senha-exemplo' }),
+    )
+  })
+  it('restaura com uma única renovação, inclusive chamadas simultâneas (StrictMode)', async () => {
+    sessionStorage.setItem(REFRESH_KEY, 'A'.repeat(43))
+    fetchMock.mockResolvedValue(reply(session('B')))
+    const store = createSessionStore()
+    await Promise.all([store.restore(), store.restore()])
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(store.getSnapshot().status).toBe('authenticated')
+    expect(sessionStorage.getItem(REFRESH_KEY)).toBe('B'.repeat(43))
+  })
+  it('sessão expirada remove o refresh e avisa para entrar novamente', async () => {
+    sessionStorage.setItem(REFRESH_KEY, 'A'.repeat(43))
+    fetchMock.mockResolvedValue(
+      reply({ erro: { codigo: 'SESSAO_INVALIDA', mensagem: 'Expirou' } }, 401),
+    )
+    const store = createSessionStore()
+    await store.restore()
+    expect(store.getSnapshot().status).toBe('anonymous')
+    expect(store.getSnapshot().message).toMatch(/expirou/)
+    expect(sessionStorage.getItem(REFRESH_KEY)).toBeNull()
+  })
+  it('falha de rede não autentica nem destrói refresh; permite tentar novamente', async () => {
+    sessionStorage.setItem(REFRESH_KEY, 'A'.repeat(43))
+    fetchMock.mockRejectedValueOnce(new TypeError('offline'))
+    const store = createSessionStore()
+    await store.restore()
+    expect(store.getSnapshot().status).toBe('error')
+    expect(sessionStorage.getItem(REFRESH_KEY)).not.toBeNull()
+    fetchMock.mockResolvedValueOnce(reply(session('B')))
+    await store.restore()
+    expect(store.getSnapshot().status).toBe('authenticated')
+  })
+  it('renova e repete uma única vez depois do 401 em uma chamada autenticada', async () => {
+    fetchMock.mockResolvedValueOnce(reply(session()))
+    const store = createSessionStore()
+    await store.login('teste@example.test', 'senha')
+    fetchMock
+      .mockResolvedValueOnce(reply({}, 401))
+      .mockResolvedValueOnce(reply(session('B')))
+      .mockResolvedValueOnce(reply({ usuario: user }))
+    expect(await store.request('/auth/me')).toEqual({ usuario: user })
+    expect(fetchMock.mock.calls[3][1]?.headers).toMatchObject({ Authorization: 'Bearer access-B' })
+    expect(
+      fetchMock.mock.calls.filter(([url]) => String(url).endsWith('/auth/refresh')),
+    ).toHaveLength(1)
+  })
+  it('segundo 401 encerra sessão sem loop de tentativas', async () => {
+    fetchMock.mockResolvedValueOnce(reply(session()))
+    const store = createSessionStore()
+    await store.login('teste@example.test', 'senha')
+    fetchMock
+      .mockResolvedValueOnce(reply({}, 401))
+      .mockResolvedValueOnce(reply(session('B')))
+      .mockResolvedValueOnce(reply({}, 401))
+    await expect(store.request('/auth/me')).rejects.toHaveProperty('status', 401)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(store.getSnapshot().status).toBe('anonymous')
+  })
+  it('logout revoga no servidor e limpa somente dados do Mindcheck', async () => {
+    fetchMock.mockResolvedValueOnce(reply(session()))
+    const store = createSessionStore()
+    await store.login('teste@example.test', 'senha')
+    sessionStorage.setItem('mindcheck:questionnaire:7:draft', '{"q":3}')
+    sessionStorage.setItem('outra-app', 'preservar')
+    fetchMock.mockResolvedValueOnce(reply(null, 204))
+    await store.logout()
+    expect(fetchMock.mock.calls[1][0]).toBe('/api/auth/logout')
+    expect(store.getSnapshot().status).toBe('anonymous')
+    expect(sessionStorage.getItem(REFRESH_KEY)).toBeNull()
+    expect(sessionStorage.getItem('mindcheck:questionnaire:7:draft')).toBeNull()
+    expect(sessionStorage.getItem('outra-app')).toBe('preservar')
+  })
+  it('falha de logout mantém sessão para repetir sem alegar revogação', async () => {
+    fetchMock.mockResolvedValueOnce(reply(session()))
+    const store = createSessionStore()
+    await store.login('teste@example.test', 'senha')
+    fetchMock.mockRejectedValueOnce(new TypeError('offline'))
+    await expect(store.logout()).rejects.toHaveProperty('status', 0)
+    expect(store.getSnapshot().status).toBe('authenticated')
+    store.forget()
+    expect(store.getSnapshot().message).toMatch(/não foi confirmada/)
+  })
+  it('resposta atrasada não recria sessão após remoção local', async () => {
+    sessionStorage.setItem(REFRESH_KEY, 'A'.repeat(43))
+    let resolve!: (value: Response) => void
+    fetchMock.mockReturnValueOnce(
+      new Promise((done) => {
+        resolve = done
+      }),
+    )
+    const store = createSessionStore()
+    const restoring = store.restore()
+    store.forget()
+    resolve(reply(session('B')))
+    await restoring
+    expect(store.getSnapshot().status).toBe('anonymous')
+    expect(sessionStorage.getItem(REFRESH_KEY)).toBeNull()
+  })
+})
