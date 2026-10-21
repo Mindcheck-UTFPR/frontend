@@ -6,6 +6,10 @@ Construir uma única interface React mobile-first para navegador e aplicativo An
 
 ## Organização
 
+A base de navegação da MIND-50 usa `src/componentes/{atomos,moleculas,organismos,modelos}` e páginas em `src/pages`, conforme a revisão da PR #3. Arquivos usam camelCase em português, componentes usam PascalCase e exportações são nomeadas. URLs, classes CSS e identificadores de APIs externas são preservados. Hooks mantêm o prefixo `use`, exigido pelo React.
+
+A estrutura de features abaixo descreve a organização das jornadas; ela não autoriza duplicar os componentes da base. Ao integrar a MIND-18, suas peças reutilizáveis devem acompanhar a organização revisada.
+
 O código de tela se divide em duas camadas: **features** (jornada e dados) e **`shared/ui`** (peças visuais reutilizáveis, em design atômico).
 
 ```text
