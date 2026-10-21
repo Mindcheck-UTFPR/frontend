@@ -1,36 +1,39 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { useEffect } from 'react'
 import { sessionStore } from './features/auth/session'
+import { LogoutButton } from './features/auth/logout-button'
 
-import CheckIn from './pages/checkin/checkin'
-import Dashboard from './pages/dashboard/dashboard'
-import DetailedResult from './pages/dashboard/detailed-result'
-import CheckInDetail from './pages/history/checkin-detail'
-import DetailQuest from './pages/history/detail-quest'
-import History from './pages/history/history'
-import HistoryCheckIns from './pages/history/history-checkins'
-import QuestHistory from './pages/history/quest-history'
-import Home from './pages/home/home'
-import ChangePassword from './pages/profile/change-password'
-import EditProfile from './pages/profile/edit-profile'
-import Profile from './pages/profile/profile'
-import QuestAnswers from './pages/questionnaires/quest-answers'
-import QuestInstructions from './pages/questionnaires/quest-instructions'
-import QuestList from './pages/questionnaires/quest-list'
-import QuestResults from './pages/questionnaires/quest-results'
-import QuestReview from './pages/questionnaires/quest-review'
-import Login from './pages/auth/login'
-import Onboarding from './pages/auth/on-boarding'
-import PasswordRecovery from './pages/auth/password-recovery'
-import SignUp from './pages/auth/sign-up'
-import PrivateRoute from './routes/private-route'
-import PublicLayout from './components/layouts/public-layout'
-import PrivateLayout from './components/layouts/private-layout'
+import { CheckinDiario } from './pages/checkin/checkinDiario'
+import { Painel } from './pages/dashboard/painel'
+import { ResultadoDetalhado } from './pages/dashboard/resultadoDetalhado'
+import { DetalheCheckin } from './pages/history/detalheCheckin'
+import { DetalheQuestionario } from './pages/history/detalheQuestionario'
+import { Historico } from './pages/history/historico'
+import { HistoricoCheckins } from './pages/history/historicoCheckins'
+import { HistoricoQuestionarios } from './pages/history/historicoQuestionarios'
+import { Inicio } from './pages/home/inicio'
+import { AlterarSenha } from './pages/profile/alterarSenha'
+import { EditarPerfil } from './pages/profile/editarPerfil'
+import { Perfil } from './pages/profile/perfil'
+import { RespostasQuestionario } from './pages/questionnaires/respostasQuestionario'
+import { InstrucoesQuestionario } from './pages/questionnaires/instrucoesQuestionario'
+import { ListaQuestionarios } from './pages/questionnaires/listaQuestionarios'
+import { ResultadoQuestionario } from './pages/questionnaires/resultadoQuestionario'
+import { RevisaoQuestionario } from './pages/questionnaires/revisaoQuestionario'
+import { Login } from './pages/auth/login'
+import { BoasVindas } from './pages/auth/boasVindas'
+import { RecuperacaoSenha } from './pages/auth/recuperacaoSenha'
+import { Cadastro } from './pages/auth/cadastro'
+import { RotaPrivada } from './routes/rotaPrivada'
+import { LayoutPublico } from './componentes/modelos/layoutPublico'
+import { LayoutPrivado } from './componentes/modelos/layoutPrivado'
 
 export function App() {
   useEffect(() => {
     void sessionStore.restore()
-    const verify = () => { if (document.visibilityState === 'visible') void sessionStore.verify() }
+    const verify = () => {
+      if (document.visibilityState === 'visible') void sessionStore.verify()
+    }
     const interval = window.setInterval(verify, 60_000)
     window.addEventListener('focus', verify)
     document.addEventListener('visibilitychange', verify)
@@ -45,67 +48,52 @@ export function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/onboarding" replace />} />
 
-        <Route element={<PublicLayout />}>
-          <Route path="/onboarding" element={<Onboarding />} />
+        <Route element={<LayoutPublico />}>
+          <Route path="/onboarding" element={<BoasVindas />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/password-recovery" element={<PasswordRecovery />} />
+          <Route path="/signup" element={<Cadastro />} />
+          <Route path="/password-recovery" element={<RecuperacaoSenha />} />
         </Route>
 
-        <Route element={<PrivateRoute />}>
-          <Route element={<PrivateLayout />}>
-            <Route path="/home" element={<Home />} />
+        <Route element={<RotaPrivada />}>
+          <Route element={<LayoutPrivado acaoConta={<LogoutButton />} />}>
+            <Route path="/home" element={<Inicio />} />
 
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile/edit" element={<EditProfile />} />
-            <Route
-              path="/profile/change-password"
-              element={<ChangePassword />}
-            />
+            <Route path="/profile" element={<Perfil />} />
+            <Route path="/profile/edit" element={<EditarPerfil />} />
+            <Route path="/profile/change-password" element={<AlterarSenha />} />
 
-            <Route path="/questionnaires" element={<QuestList />} />
+            <Route path="/questionnaires" element={<ListaQuestionarios />} />
             <Route
               path="/questionnaires/:questionnaireId/instructions"
-              element={<QuestInstructions />}
+              element={<InstrucoesQuestionario />}
             />
             <Route
               path="/questionnaires/:questionnaireId/answer"
-              element={<QuestAnswers />}
+              element={<RespostasQuestionario />}
             />
             <Route
               path="/questionnaires/:questionnaireId/review"
-              element={<QuestReview />}
+              element={<RevisaoQuestionario />}
             />
             <Route
               path="/questionnaires/:questionnaireId/result"
-              element={<QuestResults />}
+              element={<ResultadoQuestionario />}
             />
 
-            <Route path="/check-in" element={<CheckIn />} />
+            <Route path="/check-in" element={<CheckinDiario />} />
 
-            <Route path="/history" element={<History />} />
-            <Route
-              path="/history/questionnaires"
-              element={<QuestHistory />}
-            />
+            <Route path="/history" element={<Historico />} />
+            <Route path="/history/questionnaires" element={<HistoricoQuestionarios />} />
             <Route
               path="/history/questionnaires/:questionnaireId"
-              element={<DetailQuest />}
+              element={<DetalheQuestionario />}
             />
-            <Route
-              path="/history/check-ins"
-              element={<HistoryCheckIns />}
-            />
-            <Route
-              path="/history/check-ins/:checkInId"
-              element={<CheckInDetail />}
-            />
+            <Route path="/history/check-ins" element={<HistoricoCheckins />} />
+            <Route path="/history/check-ins/:checkInId" element={<DetalheCheckin />} />
 
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route
-              path="/dashboard/results/:resultId"
-              element={<DetailedResult />}
-            />
+            <Route path="/dashboard" element={<Painel />} />
+            <Route path="/dashboard/results/:resultId" element={<ResultadoDetalhado />} />
           </Route>
         </Route>
 

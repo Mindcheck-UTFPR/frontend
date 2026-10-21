@@ -39,3 +39,9 @@ Recuperação de senha permanece MIND-100/101, sem link que prometa envio inexis
 `pnpm lint`, `pnpm test`, `pnpm build`. Testes de formulários cobrem validação, confirmação, versão dos termos, 409, 429, 500, configuração indisponível e envio único. Sessão cobre restauração, rede offline, expiração, 401 sem loop, logout, limpeza seletiva e respostas atrasadas.
 
 Teste de navegador local com API de fixture: 360, 390 e 1280 px, cadastro, erro de login, retorno à rota privada, refresh, reload e logout. Não equivale à validação contra a VM. Deploy e aceite HTTPS pendentes porque as PRs base devem continuar abertas.
+# Revisão da base em 21 de outubro de 2026
+
+A revisão de nomenclatura e design atômico da PR #3 foi incorporada à branch da MIND-18 por merge normal. Login, cadastro, sessão verificada e logout foram mantidos durante a resolução dos conflitos. Os componentes visuais de autenticação agora ficam em `src/componentes`, junto aos componentes da navegação. O logout é passado pela composição da aplicação ao layout e ao cabeçalho, sem fazer o organismo importar uma feature.
+
+Validação local após a integração: lint e build aprovados; 29 testes aprovados. Isso não equivale ao aceite de UX, publicação dos termos, aprovação de PR ou deploy em produção. As PRs continuam dependentes de revisão pelo fluxo da organização.
+
