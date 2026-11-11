@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Emoji">
+<rect id="Rectangle 33" width="60" height="60" rx="30" fill="#2A66B4"/>
+<path id="Rosto" d="M30 54.375C43.4619 54.375 54.375 43.4619 54.375 30C54.375 16.5381 43.4619 5.625 30 5.625C16.5381 5.625 5.625 16.5381 5.625 30C5.625 43.4619 16.5381 54.375 30 54.375Z" fill="#2A66B4" stroke-width="2.30769" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Sobrancelhas" d="M16.875 19.6875L24.375 16.875M35.625 16.875L43.125 19.6875" stroke-width="2.30769" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Olhos" d="M21.5625 26.25V28.125M38.4375 26.25V28.125" stroke-width="2.30769" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+<path id="Boca" d="M18.75 43.125C21.5625 33.75 38.4375 33.75 41.25 43.125" stroke-width="2.30769" stroke-linecap="round" stroke-linejoin="round" stroke="black"/>
+</g>
+</svg>
