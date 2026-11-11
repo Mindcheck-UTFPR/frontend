@@ -42,7 +42,7 @@ it('mantém respostas e permite tentar salvar novamente após falha',async()=>{
 })
 it('impede conclusão duplicada enquanto o servidor está respondendo',async()=>{
   let liberar!:(v:{resultadoId:string})=>void
-  const api=servico();api.concluir=vi.fn(()=>new Promise(r=>{liberar=r}))
+  const api=servico();api.concluir=vi.fn(()=>new Promise<{resultadoId:string}>(r=>{liberar=r}))
   const sessao=criarSessaoExecucao('q1',api);await sessao.carregar();sessao.responder('p1','o1');await sessao.salvar()
   const primeira=sessao.concluir()
   await expect(sessao.concluir()).rejects.toThrow('andamento')
