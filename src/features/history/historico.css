@@ -1,4 +1,4 @@
-.history-page { max-width: 640px; margin: auto; font-family: Inter, Arial, sans-serif; color: #1c2024; }
+.history-page { max-width: 640px; margin: auto; padding: 8px; font-family: Inter, Arial, sans-serif; color: #1c2024; }
 .history-page h1 { font-size: 28px; line-height: 36px; margin: 8px 0; letter-spacing: -.4px; }
 .history-muted { color: #60646c; font-size: 14px; line-height: 20px; }
 .history-callout { background: #eaf1ff; color: #1554d6; padding: 16px; border-radius: 12px; font-size: 14px; line-height: 20px; margin: 20px 0 16px; }
