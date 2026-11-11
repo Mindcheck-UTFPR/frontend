@@ -4,3 +4,6 @@ dist
 .env.local
 *.log
 *.tsbuildinfo
+.env.*.local
+# Projeto gerado localmente; estratégia em docs/MOBILE-WEBVIEW.md
+android/
