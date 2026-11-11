@@ -15,6 +15,7 @@ import { Inicio } from './pages/home/inicio'
 import { AlterarSenha } from './pages/profile/alterarSenha'
 import { EditarPerfil } from './pages/profile/editarPerfil'
 import { Perfil } from './pages/profile/perfil'
+import { PrivacidadePagina } from './features/privacy/privacidadePagina'
 import { RespostasQuestionario } from './pages/questionnaires/respostasQuestionario'
 import { InstrucoesQuestionario } from './pages/questionnaires/instrucoesQuestionario'
 import { ListaQuestionarios } from './pages/questionnaires/listaQuestionarios'
@@ -61,6 +62,7 @@ export function App() {
 
             <Route path="/profile" element={<Perfil />} />
             <Route path="/profile/edit" element={<EditarPerfil />} />
+            <Route path="/profile/privacy" element={<PrivacidadePagina />} />
             <Route path="/profile/change-password" element={<AlterarSenha />} />
 
             <Route path="/questionnaires" element={<ListaQuestionarios />} />
