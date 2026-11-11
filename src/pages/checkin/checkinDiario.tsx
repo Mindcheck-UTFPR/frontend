@@ -1,5 +1,1 @@
-const CheckinDiario = () => {
-  return <div>CheckIn</div>
-}
-
-export { CheckinDiario }
+export { FormularioCheckin as CheckinDiario } from '../../features/checkin/formularioCheckin'
