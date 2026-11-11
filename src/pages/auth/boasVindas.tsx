@@ -11,10 +11,10 @@ export function BoasVindas() {
   return (
     <section className="onboarding" aria-labelledby="onboarding-title">
       <Link className="onboarding__skip" to="/login">Pular</Link>
-      <div className="onboarding__illustration"><img src={`/assets/figma/onboarding-${etapa + 1}.png`} alt=""/></div>
+      <div className="onboarding__illustration"><img key={etapa} src={`/assets/figma/onboarding-${etapa + 1}.png`} alt=""/></div>
       <div aria-live="polite">
         <p className="onboarding__eyebrow">BEM-VINDO AO MINDCHECK</p>
-        <h1 id="onboarding-title">{paginas[etapa].titulo}</h1>
+        <h1 key={etapa} id="onboarding-title">{paginas[etapa].titulo}</h1>
         <p className="onboarding__description">{paginas[etapa].texto}</p>
       </div>
       <div className="onboarding__steps" aria-label={`Etapa ${etapa + 1} de 3`}>{paginas.map((_, i) => <span key={i} aria-current={i === etapa ? 'step' : undefined}/>)}</div>

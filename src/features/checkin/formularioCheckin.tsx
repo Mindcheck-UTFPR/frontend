@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Botao } from '../../componentes/atomos/botao'
 import { BotaoVoltar } from '../../componentes/atomos/botaoVoltar'
 import { CampoFormulario } from '../../componentes/moleculas/campoFormulario'
+import { CartoesEscolha } from '../../componentes/moleculas/cartoesEscolha'
 import { AvisoErro } from '../../componentes/moleculas/avisoErro'
 import { humores, dataLocalHoje, servicoCheckin, type CheckinSalvo, type Humor, type ServicoCheckin } from './servicoCheckin'
 import './checkin.css'
@@ -57,11 +58,6 @@ export function FormularioCheckin({ servico = servicoCheckin }: { servico?: Serv
       setErro(causa instanceof Error ? causa.message : 'Não foi possível salvar. Suas respostas continuam no formulário.')
     } finally { pendente.current = false; setSalvando(false) }
   }
-  const simNao = (titulo: string, nome: string, valor: string, mudar: (v: string) => void) => (
-    <fieldset className="checkin-choice"><legend>{titulo} <span className="checkin-optional">(opcional)</span></legend><div>
-      {['true', 'false'].map(v => <label key={v} className={valor === v ? 'selecionado' : ''}><input type="radio" name={nome} value={v} checked={valor === v} onChange={() => mudar(v)}/>{v === 'true' ? 'Sim' : 'Não'}</label>)}
-    </div>{valor && <button type="button" className="checkin-clear" onClick={() => mudar('')}>Limpar resposta</button>}</fieldset>
-  )
   return <section className="checkin-page">
     <header className="checkin-heading"><BotaoVoltar caminhoRetorno="/home"/><span>Check-in diário</span></header>
     {carregando ? <p role="status">Consultando seu check-in…</p> : registro && !editando ? <>
@@ -74,12 +70,12 @@ export function FormularioCheckin({ servico = servicoCheckin }: { servico?: Serv
       <AvisoErro message={erro}/>
       <form ref={formRef} onSubmit={salvar} noValidate aria-busy={salvando}>
         <fieldset disabled={salvando}>
-          <fieldset className="checkin-moods" aria-describedby={erros.humor ? 'humor-error' : undefined}><legend>Nível de humor</legend><div>{humores.map(h => <label key={h.valor} className={humor === h.valor ? 'selecionado' : ''}><input type="radio" name="humor" value={h.valor} checked={humor === h.valor} onChange={() => setHumor(h.valor)} required/><img src={`/assets/checkin/${h.imagem}.svg`} alt=""/><span>{h.rotulo}</span></label>)}</div>{erros.humor && <p className="field-error" id="humor-error">{erros.humor}</p>}</fieldset>
+          <fieldset className="checkin-moods" aria-describedby={erros.humor ? 'humor-error' : undefined}><legend>Nível de humor</legend><div>{humores.map(h => <label key={h.valor} className={humor === h.valor ? 'selecionado' : ''}><input aria-label={h.rotulo} type="radio" name="humor" value={h.valor} checked={humor === h.valor} onChange={() => setHumor(h.valor)} required/><span className="mood-visual"><img src={`/assets/checkin/${h.imagem}.svg`} alt=""/><span className="mood-check" aria-hidden="true">✓</span></span><span className="mood-label">{h.rotulo}</span></label>)}</div>{erros.humor && <p className="field-error" id="humor-error">{erros.humor}</p>}</fieldset>
           <CampoFormulario id="checkin-sono" name="sono" label="Quantas horas você dormiu? (opcional)" type="text" inputMode="decimal" value={sono} onChange={e => setSono(e.target.value)} placeholder="Ex.: 7,5" hint="Use horas em número; 7,5 equivale a 7h30." error={erros.sono}/>
-          {simNao('Estudou hoje?', 'estudou', estudou, setEstudou)}
-          {simNao('Realizou atividade física hoje?', 'atividade', atividade, setAtividade)}
+          <CartoesEscolha titulo="Estudou hoje?" valor={estudou} aoMudar={setEstudou}/>
+          <CartoesEscolha titulo="Realizou atividade física hoje?" valor={atividade} aoMudar={setAtividade}/>
           <label className="checkin-note" htmlFor="checkin-nota">Observações (opcional)<textarea id="checkin-nota" value={nota} maxLength={280} rows={4} onChange={e => setNota(e.target.value)} placeholder="Escreva algo sobre o seu dia…" aria-describedby="nota-contador"/></label>
-          <small id="nota-contador">{nota.length}/280 caracteres</small>
+          <small id="nota-contador" className="checkin-counter">{nota.length}/280 caracteres</small>
           <Botao type="submit">{salvando ? 'Salvando…' : editando ? 'Salvar alterações' : 'Confirmar'}</Botao>
         </fieldset>
       </form>
