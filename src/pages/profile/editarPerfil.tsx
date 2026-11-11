@@ -1,5 +1,1 @@
-const EditarPerfil = () => {
-  return <div>EditProfile</div>
-}
-
-export { EditarPerfil }
+export { EditarPerfilPagina as EditarPerfil } from '../../features/profile/perfilPaginas'

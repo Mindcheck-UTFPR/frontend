@@ -45,7 +45,7 @@ export default function SignupPage() {
     const email = String(data.get('email') || '').trim()
     const senha = String(data.get('senha') || '')
     const confirmacao = String(data.get('confirmacao') || '')
-    const termosAceitos = data.get('termosAceitos') === 'on'
+    const termosAceitos = data.get('termosAceitos') === 'on' && data.get('privacidadeAceita') === 'on'
     const invalid: Record<string, string> = {}
     if (nome.length < 2 || nome.length > 120)
       invalid.nome = 'Informe um nome entre 2 e 120 caracteres.'
@@ -80,7 +80,7 @@ export default function SignupPage() {
     }
   }
   return (
-    <ModeloAutenticacao title="Faça seu cadastro" description="Crie sua conta para começar.">
+    <ModeloAutenticacao backTo="/login" title="Crie sua conta" description="Preencha seus dados para começar a usar o MindCheck.">
       <form onSubmit={submit} noValidate aria-busy={busy}>
         <AvisoErro message={error || configError} />
         {configError && (
@@ -106,7 +106,8 @@ export default function SignupPage() {
           <CampoFormulario
             id="cadastro-nome"
             name="nome"
-            label="Nome"
+            label="Nome completo"
+            placeholder="Seu nome"
             autoComplete="name"
             required
             maxLength={120}
@@ -117,6 +118,7 @@ export default function SignupPage() {
             name="email"
             label="E-mail"
             type="email"
+            placeholder="usuario@email.com"
             autoComplete="email"
             required
             maxLength={255}
@@ -131,13 +133,14 @@ export default function SignupPage() {
             required
             minLength={8}
             maxLength={128}
-            hint="Use entre 8 e 128 caracteres."
+            placeholder="Mínimo de 8 caracteres"
             error={fields.senha}
           />
           <CampoFormulario
             id="cadastro-confirmacao"
             name="confirmacao"
-            label="Confirme a senha"
+            label="Confirmar senha"
+            placeholder="Repita a senha"
             type="password"
             autoComplete="new-password"
             required
@@ -155,12 +158,16 @@ export default function SignupPage() {
                   aria-describedby={fields.termosAceitos ? 'termos-error' : undefined}
                 />
                 <span>
-                  Li e aceito os{' '}
+                  Declaro que li e concordo com os{' '}
                   <a href={config.termosUrl} target="_blank" rel="noopener noreferrer">
-                    termos de uso e privacidade
+                    Termos de Uso do MindCheck
                   </a>{' '}
                   (versão {config.termosVersao}).
                 </span>
+              </label>
+              <label>
+                <input type="checkbox" name="privacidadeAceita" required aria-invalid={Boolean(fields.termosAceitos)} aria-describedby={fields.termosAceitos ? 'termos-error' : undefined}/>
+                <span>Declaro que li e estou ciente da <a href={config.termosUrl} target="_blank" rel="noopener noreferrer">Política de Privacidade</a> e do tratamento dos meus dados.</span>
               </label>
               {fields.termosAceitos && (
                 <small className="field-error" id="termos-error">
@@ -170,7 +177,7 @@ export default function SignupPage() {
             </div>
           )}
           <Botao type="submit" disabled={!config?.termosUrl}>
-            {busy ? 'Criando conta…' : 'Criar conta'}
+            {busy ? 'Criando conta…' : 'Cadastrar'}
           </Botao>
         </fieldset>
         <p className="auth-shell__links">

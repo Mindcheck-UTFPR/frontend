@@ -72,4 +72,5 @@ pnpm build
 ## Documentação
 
 - [Arquitetura do frontend](docs/ARCHITECTURE.md)
+- [Componentes, movimento e UX responsiva](docs/UX-RESPONSIVA.md)
 - [Plano do aplicativo WebView](docs/MOBILE-WEBVIEW.md)

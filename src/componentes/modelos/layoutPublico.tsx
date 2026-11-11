@@ -1,9 +1,11 @@
-import { Outlet } from 'react-router-dom'
+import { EntradaSuave } from './experiencia'
+import { Outlet, useLocation } from 'react-router-dom'
 
 const LayoutPublico = () => {
+  const { pathname } = useLocation()
   return (
     <main className="public-layout">
-      <Outlet />
+<EntradaSuave key={pathname} className="public-transition"><Outlet /></EntradaSuave>
     </main>
   )
 }

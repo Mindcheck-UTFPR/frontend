@@ -1,0 +1,29 @@
+.mc-label { display:block; margin:0 0 8px; font-size:14px; line-height:20px; font-weight:500; color:var(--mc-text,#1c2024); }
+.mc-optional { display:inline-block; margin-left:6px; font-size:11px; line-height:18px; color:#687282; font-weight:400; }
+.mc-choice { margin:24px 0; }
+.mc-choice-group { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.mc-choice-item { position:relative; isolation:isolate; border:1px solid #d9dce5; background:white; border-radius:14px; min-height:50px; padding:12px 28px; font:inherit; font-size:15px; font-weight:600; color:#40454f; cursor:pointer; transition:border-color .18s,color .18s,box-shadow .18s,transform .18s; -webkit-tap-highlight-color:transparent; }
+.mc-choice-background { position:absolute; inset:0; z-index:-1; background:#edf3ff; border-radius:inherit; }
+.mc-choice-item[data-state=on] { border-color:#6c97ff; color:#1554d6; box-shadow:inset 0 0 0 1px #6c97ff; }
+.mc-choice-item:active:not(:disabled) { transform:scale(.98); }
+.mc-choice-item:focus-visible { outline:2px solid #1764ff; outline-offset:3px; }
+.mc-choice-check { position:absolute; display:grid; place-items:center; top:50%; right:12px; transform:translateY(-50%) scale(.6); opacity:0; transition:opacity .18s,transform .18s; }
+.mc-choice-item[data-state=on] .mc-choice-check { opacity:1; transform:translateY(-50%) scale(1); }
+.mc-select { min-width:0; }
+.mc-select-trigger { display:flex; width:100%; min-height:48px; justify-content:space-between; align-items:center; gap:10px; border:1px solid #d9dce5; border-radius:12px; background:#fff; padding:10px 12px; font:inherit; font-size:14px; text-align:left; color:#303640; cursor:pointer; transition:border-color .18s,box-shadow .18s,background .18s; }
+.mc-select-trigger > span:first-child { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mc-select-trigger[data-state=open] { border-color:#92b0ff; box-shadow:0 0 0 3px #edf3ff; }
+.mc-select-trigger:focus-visible { outline:2px solid #1764ff; outline-offset:3px; }
+.mc-select-chevron { display:flex; color:#687282; transition:transform .2s; }.mc-select-trigger[data-state=open] .mc-select-chevron { transform:rotate(180deg); }
+.mc-select-content { z-index:100; min-width:var(--radix-select-trigger-width); max-width:calc(100vw - 24px); max-height:min(320px,var(--radix-select-content-available-height)); overflow:hidden; border:1px solid #e0e4ed; border-radius:16px; padding:6px; color:#1c2024; background:#fff; box-shadow:0 12px 40px #233b651c,0 2px 8px #233b650a; font-family:Inter,Arial,sans-serif; transform-origin:var(--radix-select-content-transform-origin); animation:mc-menu-in .18s ease-out; }
+.mc-select-item { position:relative; min-height:44px; display:flex; align-items:center; justify-content:space-between; gap:20px; font-size:14px; padding:10px 12px; border-radius:10px; cursor:pointer; outline:none; user-select:none; }
+.mc-select-item[data-highlighted] { background:#f4f7fc; }.mc-select-item[data-state=checked] { background:#edf3ff; color:#1554d6; font-weight:500; }
+.mc-select-scroll { display:flex; align-items:center; justify-content:center; height:24px; color:#687282; }
+@media (hover:hover) { .mc-choice-item:hover:not(:disabled) { border-color:#92b0ff; }.mc-select-trigger:hover:not(:disabled) { border-color:#9ca8bd; background:#fcfdff; } }
+@keyframes mc-menu-in { from { opacity:0; transform:translateY(-4px) scale(.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+@media (prefers-reduced-motion:reduce) { .mc-choice-item,.mc-choice-check,.mc-select-trigger,.mc-select-chevron,.mc-select-content { transition:none; animation:none; } }
+.mc-dialog-overlay { position:fixed;inset:0;background:#17264166;backdrop-filter:blur(4px);z-index:50;animation:mc-overlay-in .18s; }
+.mc-dialog { position:fixed;z-index:51;top:50%;left:50%;transform:translate(-50%,-50%);width:calc(100% - 32px);max-width:440px;max-height:calc(100svh - 32px);overflow:auto;background:#fff;border:1px solid #e1e6ef;border-radius:24px;padding:24px;box-shadow:0 24px 80px #10234433;font-family:Inter,Arial,sans-serif; }
+.mc-dialog h2 { font-size:24px;line-height:30px;letter-spacing:-.6px;margin:0 0 8px; }.mc-dialog > p { color:#687282;font-size:14px;line-height:21px; }
+.mc-dialog .button { width:100%;margin-top:8px; }
+.mc-choice-item:disabled { opacity:.5;cursor:default; }

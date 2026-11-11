@@ -59,6 +59,8 @@ Controle com comportamento nativo suficiente (`button`, `a`, campo de texto) con
 
 Instalar só o primitivo que a tela precisa. A feature importa o componente Mindcheck, nunca o pacote Radix.
 
+O calendário usa React Aria dentro da molécula SeletorData, carregado sob demanda, com menus de mês/ano, foco e localização pt-BR. Essa biblioteca atende o controle de data que não tem equivalente em Radix. Dropdowns comuns e cartões de seleção continuam usando Radix em componentes Mindcheck. Transições compartilhadas usam Motion/LazyMotion e respeitam movimento reduzido. Veja [UX-RESPONSIVA.md](UX-RESPONSIVA.md).
+
 ## Regras de interface
 
 - Projetar primeiro para celular: toque confortável, texto legível, ação principal ao alcance de uma mão.

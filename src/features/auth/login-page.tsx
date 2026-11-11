@@ -56,7 +56,8 @@ export default function LoginPage() {
     }
   }
   return (
-    <ModeloAutenticacao title="Entre na sua conta" description="Acesse seu espaço no MindCheck.">
+    <ModeloAutenticacao title="Entre ou cadastre-se">
+      <div className="login-logo" aria-label="MindCheck"><img src="/assets/figma/logo-cerebro.svg" alt=""/><img src="/assets/figma/logo-nome.svg" alt="MindCheck"/></div>
       {location.state?.created && (
         <p role="status" className="success-notice">
           Cadastro realizado. Entre com seu e-mail e senha.
@@ -71,6 +72,7 @@ export default function LoginPage() {
             name="email"
             label="E-mail"
             type="email"
+            placeholder="usuario@email.com"
             autoComplete="username"
             required
             maxLength={255}
@@ -81,17 +83,18 @@ export default function LoginPage() {
             name="senha"
             label="Senha"
             type="password"
+            placeholder="••••••••••"
             autoComplete="current-password"
             required
             maxLength={128}
             error={fields.senha}
           />
+          <p className="login-recovery"><Link to="/password-recovery">Esqueci minha senha</Link></p>
           <Botao type="submit">{busy ? 'Entrando…' : 'Entrar'}</Botao>
         </fieldset>
         <p className="auth-shell__links">
           Não tem uma conta? <Link to="/signup">Cadastre-se</Link>
         </p>
-        <p className="auth-shell__help">Recuperação de senha ainda não disponível nesta versão.</p>
       </form>
     </ModeloAutenticacao>
   )
