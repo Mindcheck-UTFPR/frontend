@@ -33,7 +33,7 @@ it('não informa alteração de senha com serviço indisponível',async()=>{
   fireEvent.change(screen.getByLabelText('Senha atual',{exact:true}),{target:{value:'atual-ficticia'}})
   fireEvent.change(screen.getByLabelText('Nova senha',{exact:true}),{target:{value:'nova-ficticia'}})
   fireEvent.change(screen.getByLabelText('Confirmar nova senha',{exact:true}),{target:{value:'nova-ficticia'}})
-  fireEvent.click(screen.getByRole('button',{name:'Alterar senha',exact:true}))
+  fireEvent.click(screen.getByRole('button',{name:'Alterar senha'}))
   expect(await screen.findByRole('alert')).toHaveTextContent('Nenhuma mudança foi salva')
   expect(screen.queryByText('Senha alterada.')).not.toBeInTheDocument()
 })
