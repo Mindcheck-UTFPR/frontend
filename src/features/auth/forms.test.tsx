@@ -42,7 +42,7 @@ function signup() {
   )
 }
 async function fillSignup() {
-  (await screen.findAllByRole('checkbox'))[0]
+  await screen.findAllByRole('checkbox')
   for (const [label, value] of [
     ['Nome completo', 'Conta Teste'],
     ['E-mail', 'teste@example.test'],
