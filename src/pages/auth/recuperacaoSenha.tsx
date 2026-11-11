@@ -1,5 +1,1 @@
-const RecuperacaoSenha = () => {
-  return <div>PasswordRecovery</div>
-}
-
-export { RecuperacaoSenha }
+export { RecuperacaoPagina as RecuperacaoSenha } from '../../features/recovery/recuperacaoPagina'

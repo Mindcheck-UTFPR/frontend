@@ -1,5 +1,1 @@
-const AlterarSenha = () => {
-  return <div>ChangePassword</div>
-}
-
-export { AlterarSenha }
+export { AlterarSenhaFormulario as AlterarSenha } from '../../features/profile/perfilPaginas'
