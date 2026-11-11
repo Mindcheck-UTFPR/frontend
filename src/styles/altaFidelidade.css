@@ -28,7 +28,7 @@ button, input, textarea, select { font: inherit; }
 .login-logo { display: grid; place-items: center; gap: 12px; padding: 44px 0 40px; }
 .auth-shell:has(.login-logo) h1 { max-width: 246px; }
 .login-logo img:first-child { width: 124px; height: 94px; }
-.login-logo img:last-child { width: 122px; height: 26px; }
+.login-logo img:last-child { width: 122px; height: auto; }
 .login-recovery { text-align: right; font-size: 14px; margin: 0 0 28px; }
 .terms-field { font-size: 14px; line-height: 20px; }
 .terms-field label { margin-bottom: 12px; }
