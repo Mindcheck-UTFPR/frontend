@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { SeletorData } from '../../componentes/moleculas/seletorData'
+import { Selecao } from '../../componentes/atomos/selecao'
+import { IconeInterface } from '../../componentes/atomos/iconeInterface'
 import { Botao } from '../../componentes/atomos/botao'
 import { EstadoErro } from '../../componentes/moleculas/estadoErro'
 import { EstadoVazio } from '../../componentes/moleculas/estadoVazio'
@@ -22,6 +25,7 @@ function HistoricoCheckinsConteudo({ servico }: { servico: ServicoHistorico }) {
   const [tentativa, setTentativa] = useState(0)
   const inicio = params.get('inicio') ?? '', fim = params.get('fim') ?? '', humor = params.get('humor') ?? ''
   const pagina = Math.max(1, Number(params.get('pagina')) || 1)
+  const [filtrosAbertos, setFiltrosAbertos] = useState(Boolean(inicio || fim || humor))
   const [rascunho, setRascunho] = useState({ inicio, fim, humor })
   const periodoInvalido = Boolean(inicio && fim && inicio > fim)
   useEffect(() => {
@@ -44,12 +48,20 @@ function HistoricoCheckinsConteudo({ servico }: { servico: ServicoHistorico }) {
     <h1>Histórico</h1><p className="history-muted">Seus check-ins e questionários concluídos.</p>
     <aside className="history-callout"><strong>Aviso importante</strong><p>Os resultados mostrados aqui são para acompanhamento pessoal e não substituem diagnóstico ou orientação profissional.</p></aside>
     <nav className="history-tabs" aria-label="Tipo de histórico"><Link to="/history/check-ins" aria-current="page">Check-ins</Link><Link to="/history/questionnaires">Questionários</Link></nav>
-    <form className="history-filters" onSubmit={e => { e.preventDefault(); if (rascunho.inicio && rascunho.fim && rascunho.inicio > rascunho.fim) { setErro('A data inicial deve ser anterior à data final.'); return }; navegar({ ...rascunho, pagina: 1 }) }}>
-      <label>De<input type="date" value={rascunho.inicio} onChange={e => setRascunho({ ...rascunho, inicio: e.target.value })}/></label>
-      <label>Até<input type="date" value={rascunho.fim} onChange={e => setRascunho({ ...rascunho, fim: e.target.value })}/></label>
-      <label>Humor<select value={rascunho.humor} onChange={e => setRascunho({ ...rascunho, humor: e.target.value })}><option value="">Todos</option>{Object.entries(rotulosHumor).map(([v,r]) => <option key={v} value={v}>{r}</option>)}</select></label>
-      <Botao type="submit">Filtrar</Botao><Botao type="button" className="button--subtle" onClick={() => { setRascunho({ inicio:'',fim:'',humor:'' }); navegar({ inicio:'',fim:'',humor:'',pagina:1 }) }}>Limpar filtros</Botao>
-    </form>
+    <details className="history-filter-panel" open={filtrosAbertos} onToggle={e => setFiltrosAbertos(e.currentTarget.open)}>
+      <summary><span className="history-filter-title"><IconeInterface nome="filtro"/>Filtrar registros{(inicio || fim || humor) && <span className="history-filter-count">{[inicio || fim,humor].filter(Boolean).length}</span>}</span><IconeInterface nome="baixo" tamanho={18}/></summary>
+      <form className="history-filters" onSubmit={e => { e.preventDefault(); if (rascunho.inicio && rascunho.fim && rascunho.inicio > rascunho.fim) { setErro('A data inicial deve ser anterior à data final.'); return }; navegar({ ...rascunho, pagina: 1 }) }}>
+        <div className="history-quick-dates" aria-label="Períodos rápidos">{[{dias:7,rotulo:'Últimos 7 dias'},{dias:30,rotulo:'Últimos 30 dias'}].map(item => <button type="button" key={item.dias} onClick={() => {
+          const fim = new Date(), comeco = new Date(); comeco.setDate(comeco.getDate() - item.dias + 1)
+          const local = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+          navegar({inicio:local(comeco),fim:local(fim),humor:rascunho.humor,pagina:1})
+        }}>{item.rotulo}</button>)}</div>
+        <SeletorData rotulo="De" valor={rascunho.inicio} aoMudar={v => setRascunho({...rascunho,inicio:v})} maximo={rascunho.fim}/>
+        <SeletorData rotulo="Até" valor={rascunho.fim} aoMudar={v => setRascunho({...rascunho,fim:v})} minimo={rascunho.inicio}/>
+        <div className="history-mood-filter"><Selecao rotulo="Humor" valor={rascunho.humor} aoMudar={v => setRascunho({...rascunho,humor:v})} opcoes={[{valor:'',rotulo:'Todos os humores'},...Object.entries(rotulosHumor).map(([valor,rotulo])=>({valor,rotulo}))]}/></div>
+        <div className="history-filter-actions"><Botao type="button" className="button--subtle" onClick={() => { setRascunho({ inicio:'',fim:'',humor:'' }); navegar({ inicio:'',fim:'',humor:'',pagina:1 }) }}>Limpar filtros</Botao><Botao type="submit">Aplicar filtros</Botao></div>
+      </form>
+    </details>
     <h2 className="history-overline">Check-ins concluídos</h2>
     {periodoInvalido ? <EstadoErro mensagem="A data inicial deve ser anterior à data final."/> : erro ? <EstadoErro mensagem={erro} tentarNovamente={() => { setResposta(null); setErro(''); setTentativa(tentativa + 1) }}/> : !resposta ? <p role="status">Carregando histórico…</p> : <>
       {resposta.registros.length === 0 ? <EstadoVazio titulo={inicio || fim || humor ? 'Nenhum registro nesse período' : 'Você ainda não tem check-ins'} mensagem="Faça um check-in para começar seu acompanhamento."/> : <ul className="history-list">{resposta.registros.map(r => <li key={r.id}><Rosto humor={r.humor}/><div><strong>{data(r.data)}</strong><small>Humor: {rotulosHumor[r.humor]}</small></div><Link className="button button--subtle" to={`/history/check-ins/${encodeURIComponent(r.id)}?${params}`} aria-label={`Detalhes de ${data(r.data)}`}>Detalhes</Link></li>)}</ul>}
