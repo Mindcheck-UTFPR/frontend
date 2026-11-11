@@ -42,24 +42,24 @@ function signup() {
   )
 }
 async function fillSignup() {
-  await screen.findByRole('checkbox')
+  (await screen.findAllByRole('checkbox'))[0]
   for (const [label, value] of [
-    ['Nome', 'Conta Teste'],
+    ['Nome completo', 'Conta Teste'],
     ['E-mail', 'teste@example.test'],
     ['Senha', 'senha-segura-123'],
-    ['Confirme a senha', 'senha-segura-123'],
+    ['Confirmar senha', 'senha-segura-123'],
   ])
     fireEvent.change(screen.getByLabelText(label, { exact: true }), { target: { value } })
-  fireEvent.click(screen.getByRole('checkbox'))
+  screen.getAllByRole('checkbox').forEach((checkbox) => fireEvent.click(checkbox))
 }
 it('valida os campos e confirmação sem enviar credenciais inválidas', async () => {
   fetchMock.mockResolvedValueOnce(reply(config))
   signup()
   await fillSignup()
-  fireEvent.change(screen.getByLabelText('Confirme a senha', { exact: true }), {
+  fireEvent.change(screen.getByLabelText('Confirmar senha', { exact: true }), {
     target: { value: 'outra-senha' },
   })
-  fireEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Cadastrar' }))
   expect(await screen.findByText('As senhas precisam ser iguais.')).toBeInTheDocument()
   expect(fetchMock).toHaveBeenCalledTimes(1)
 })
@@ -69,7 +69,7 @@ it('envia cadastro com a versão vigente e redireciona ao login sem guardar senh
     .mockResolvedValueOnce(reply({ usuario: session.usuario }, 201))
   signup()
   await fillSignup()
-  fireEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Cadastrar' }))
   expect(await screen.findByText(/Cadastro realizado/)).toBeInTheDocument()
   expect(JSON.parse(String(fetchMock.mock.calls[1][1]?.body))).toEqual({
     nome: 'Conta Teste',
@@ -89,10 +89,10 @@ it('mostra conflito de e-mail e preserva os outros campos para correção', asyn
     )
   signup()
   await fillSignup()
-  fireEvent.click(screen.getByRole('button', { name: 'Criar conta' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Cadastrar' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('Este e-mail já está cadastrado.')
   expect(screen.getByLabelText('E-mail', { exact: true })).toHaveAttribute('aria-invalid', 'true')
-  expect(screen.getByLabelText('Nome', { exact: true })).toHaveValue('Conta Teste')
+  expect(screen.getByLabelText('Nome completo', { exact: true })).toHaveValue('Conta Teste')
 })
 it('não oferece aceite sem documento publicado', async () => {
   fetchMock.mockResolvedValueOnce(reply({ ...config, termosUrl: null }))
@@ -100,14 +100,14 @@ it('não oferece aceite sem documento publicado', async () => {
   expect(
     await screen.findByText(/termos de uso e privacidade ainda não foram publicados/),
   ).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: 'Criar conta' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Cadastrar' })).toBeDisabled()
   expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
 })
 it('permite recuperar falha de configuração de cadastro', async () => {
   fetchMock.mockRejectedValueOnce(new TypeError('offline')).mockResolvedValueOnce(reply(config))
   signup()
   fireEvent.click(await screen.findByRole('button', { name: 'Tentar carregar novamente' }))
-  expect(await screen.findByRole('checkbox')).toBeInTheDocument()
+  expect((await screen.findAllByRole('checkbox'))[0]).toBeInTheDocument()
 })
 it('não faz login duplicado enquanto a requisição está em andamento', async () => {
   let resolve!: (value: Response) => void
@@ -146,7 +146,7 @@ it('bloqueia rota privada sem confiar em token inventado no localStorage', async
       </Routes>
     </MemoryRouter>,
   )
-  expect(await screen.findByRole('heading', { name: 'Entre na sua conta' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: 'Entre ou cadastre-se' })).toBeInTheDocument()
   expect(screen.queryByText('Dados privados')).not.toBeInTheDocument()
 })
 it.each([429, 500])('trata erro HTTP %s sem expor detalhes internos', async (status) => {
