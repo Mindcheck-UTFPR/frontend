@@ -7,7 +7,8 @@ afterEach(cleanup)
 const salvo: CheckinSalvo = { id: 'c1', data: '2026-11-11', humor: 'bom', sonoHoras: 7.5, estudou: true, atividadeFisica: null, observacoes: 'Nota de teste', podeEditar: true }
 function abrir(servico?: ServicoCheckin) { render(<MemoryRouter><FormularioCheckin servico={servico}/></MemoryRouter>) }
 it('não mostra sucesso quando a integração não está disponível', async () => {
-  abrir()
+  const indisponivel = async (): Promise<never> => { throw new Error('Nenhuma informação foi enviada') }
+  abrir({ buscarHoje: indisponivel, salvar: indisponivel })
   expect(await screen.findByRole('alert')).toHaveTextContent('Nenhuma informação foi enviada')
   fireEvent.click(screen.getByLabelText('Bem', { exact: true }))
   fireEvent.click(screen.getByRole('button', { name: 'Confirmar' }))

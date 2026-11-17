@@ -270,30 +270,5 @@ a {
   background: #2563eb;
 }
 
-@media (min-width: 768px) {
-  .private-layout {
-    padding-bottom: 0;
-  }
-
-  .private-layout__body {
-    display: grid;
-    grid-template-columns: 15rem minmax(0, 1fr);
-  }
-
-  .private-layout__desktop-nav {
-    display: block;
-    min-height: calc(100dvh - 4rem);
-    padding: 1rem;
-    background: #ffffff;
-    border-right: 1px solid #e2e8f0;
-  }
-
-  .private-layout__content {
-    margin: 0;
-    padding: 2rem;
-  }
-
-  .mobile-navigation {
-    display: none;
-  }
-}
+#root { width: min(100%, 440px); min-height: 100dvh; margin-inline: auto; background: #f9f9fb; box-shadow: 0 0 24px #17264114; }
+.mobile-navigation { width: min(100%, 440px); margin-inline: auto; }
