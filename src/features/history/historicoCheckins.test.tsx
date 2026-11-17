@@ -10,7 +10,8 @@ function abrir(servico?: ServicoHistorico, rota = '/history/check-ins') {
   render(<MemoryRouter initialEntries={[rota]}><Routes><Route path="/history/check-ins" element={<HistoricoCheckinsPagina servico={servico}/>}/><Route path="/history/check-ins/:checkInId" element={<DetalheCheckinPagina servico={servico}/>}/></Routes></MemoryRouter>)
 }
 it('mostra falha de serviço sem inventar uma lista vazia', async () => {
-  abrir()
+  const indisponivel = async (): Promise<never> => { throw new Error('Seu histórico ainda não está disponível.') }
+  abrir({ listar: indisponivel, detalhar: indisponivel })
   expect(await screen.findByRole('alert')).toHaveTextContent('ainda não está disponível')
   expect(screen.queryByText('Você ainda não tem check-ins')).not.toBeInTheDocument()
 })
