@@ -5,7 +5,7 @@ import { BotaoVoltar } from '../../componentes/atomos/botaoVoltar'
 import { CampoFormulario } from '../../componentes/moleculas/campoFormulario'
 import { CartoesEscolha } from '../../componentes/moleculas/cartoesEscolha'
 import { AvisoErro } from '../../componentes/moleculas/avisoErro'
-import { humores, dataLocalHoje, servicoCheckin, type CheckinSalvo, type Humor, type ServicoCheckin } from './servicoCheckin'
+import { humores, dataLocalHoje, servicoCheckin, CheckinExistente, type CheckinSalvo, type Humor, type ServicoCheckin } from './servicoCheckin'
 import './checkin.css'
 
 export function FormularioCheckin({ servico = servicoCheckin }: { servico?: ServicoCheckin }) {
@@ -55,12 +55,21 @@ export function FormularioCheckin({ servico = servicoCheckin }: { servico?: Serv
       const salvo = await servico.salvar({ data: registro?.data ?? dataLocalHoje(), humor, sonoHoras: horas, estudou: estudou === '' ? null : estudou === 'true', atividadeFisica: atividade === '' ? null : atividade === 'true', observacoes: nota.trim() }, registro?.id)
       setRegistro(salvo); setEditando(false); setConfirmado(true)
     } catch (causa) {
+      if (causa instanceof CheckinExistente) {
+        setRegistro(causa.registro)
+        setHumor(causa.registro.humor)
+        setSono(causa.registro.sonoHoras === null ? '' : String(causa.registro.sonoHoras))
+        setEstudou(causa.registro.estudou === null ? '' : String(causa.registro.estudou))
+        setAtividade(causa.registro.atividadeFisica === null ? '' : String(causa.registro.atividadeFisica))
+        setNota(causa.registro.observacoes)
+      }
       setErro(causa instanceof Error ? causa.message : 'Não foi possível salvar. Suas respostas continuam no formulário.')
     } finally { pendente.current = false; setSalvando(false) }
   }
   return <section className="checkin-page">
     <header className="checkin-heading"><BotaoVoltar caminhoRetorno="/home"/><span>Check-in diário</span></header>
     {carregando ? <p role="status">Consultando seu check-in…</p> : registro && !editando ? <>
+      <AvisoErro message={erro}/>
       <div className="checkin-confirmation" role={confirmado ? 'status' : undefined}><span aria-hidden="true">✓</span><h1>{confirmado ? 'Check-in registrado!' : 'Você já realizou seu check-in de hoje'}</h1><p>Seu humor e sua rotina ficaram registrados.</p></div>
       <article className="checkin-summary"><img src={`/assets/checkin/${humores.find(h => h.valor === registro.humor)?.imagem}.svg`} alt=""/><h2>{humores.find(h => h.valor === registro.humor)?.rotulo}</h2><p>{registro.data.split('-').reverse().join('/')}</p></article>
       {registro.podeEditar && <Botao onClick={() => { setEditando(true); setConfirmado(false) }}>Editar check-in</Botao>}

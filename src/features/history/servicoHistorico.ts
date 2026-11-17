@@ -9,5 +9,19 @@ export interface ServicoHistorico {
   listar(filtros: FiltrosCheckin): Promise<{ registros: RegistroCheckin[]; temProxima: boolean }>
   detalhar(id: string): Promise<RegistroCheckin>
 }
-const indisponivel = async (): Promise<never> => { throw new Error('Seu histórico ainda não está disponível. Tente novamente mais tarde.') }
-export const servicoHistorico: ServicoHistorico = { listar: indisponivel, detalhar: indisponivel }
+export const servicoHistorico: ServicoHistorico = {
+  async listar(filtros) {
+    const params = new URLSearchParams({ pagina: String(filtros.pagina), limite: '10' })
+    if (filtros.inicio) params.set('dataInicio', filtros.inicio)
+    if (filtros.fim) params.set('dataFim', filtros.fim)
+    if (filtros.humor) params.set('humor', filtros.humor)
+    const resposta = await sessionStore.request<{ checkins: CheckinApi[]; temProxima: boolean }>(`/checkins?${params}`)
+    return { registros: resposta.checkins.map(converterCheckin), temProxima: resposta.temProxima }
+  },
+  async detalhar(id) {
+    const resposta = await sessionStore.request<{ checkin: CheckinApi }>(`/checkins/${encodeURIComponent(id)}`)
+    return converterCheckin(resposta.checkin)
+  },
+}
+import { sessionStore } from '../auth/session'
+import { converterCheckin, type CheckinApi } from '../checkin/servicoCheckin'
