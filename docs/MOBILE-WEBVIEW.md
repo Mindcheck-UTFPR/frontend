@@ -9,11 +9,11 @@ O projeto continuará sendo uma aplicação React. O Capacitor será usado para 
 Requisitos: Node 22+, pnpm 10+, Android Studio 2025.2.1+, SDK 36 e o JDK fornecido pelo Android Studio. O aplicativo suporta Android API 24+. Veja os [requisitos oficiais](https://capacitorjs.com/docs/getting-started/environment-setup).
 
 1. Execute `pnpm install --frozen-lockfile` e, na primeira vez, `pnpm android:init`.
-2. Crie `.env.android.local` (ignorado) com `VITE_API_URL=https://seu-dominio.example/api`. Use a API publicada com HTTPS válido: `/api` relativo e localhost não funcionam no aplicativo empacotado.
+2. O build Android usa a API de produção configurada em `.env.android`. Para testar outra API, crie `.env.android.local` (ignorado) com `VITE_API_URL=https://seu-dominio.example/api`. Use HTTPS válido: `/api` relativo e localhost não funcionam no aplicativo empacotado.
 3. Execute `pnpm android:sync` para compilar e copiar a interface. Depois execute `pnpm android:open`.
 4. No Android Studio, aguarde o Gradle, selecione um emulador/aparelho e execute **Run**. Para gerar um APK debug, use **Build > Generate App Bundles or APKs > Generate APKs**.
 
-A API precisa permitir `https://localhost` no CORS, além da origem web. Essa configuração pertence ao backend. Nenhum segredo JWT deve ser incluído no aplicativo.
+A API permite a origem `https://localhost` usada pelo WebView Android, além da origem web configurada. Nenhum segredo JWT deve ser incluído no aplicativo.
 
 ## Validação pendente no dispositivo
 
