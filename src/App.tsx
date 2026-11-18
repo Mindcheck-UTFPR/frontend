@@ -6,6 +6,10 @@ import { LogoutButton } from './features/auth/logout-button'
 import { CheckinDiario } from './pages/checkin/checkinDiario'
 import { Painel } from './pages/dashboard/painel'
 import { ResultadoDetalhado } from './pages/dashboard/resultadoDetalhado'
+import { InicioAdmin } from './pages/dashboard/admin/inicioAdmin'
+import { QuestionariosAdmin } from './pages/dashboard/admin/questionariosAdmin'
+import { UsuariosAdmin } from './pages/dashboard/admin/usuariosAdmin'
+import { AuditoriaAdmin } from './pages/dashboard/admin/auditoriaAdmin'
 import { DetalheCheckin } from './pages/history/detalheCheckin'
 import { DetalheQuestionario } from './pages/history/detalheQuestionario'
 import { Historico } from './pages/history/historico'
@@ -96,6 +100,11 @@ export function App() {
 
             <Route path="/dashboard" element={<Painel />} />
             <Route path="/dashboard/results/:resultId" element={<ResultadoDetalhado />} />
+
+            <Route path="/dashboard/admin" element={<InicioAdmin />} />
+            <Route path="/dashboard/admin/questionarios" element={<QuestionariosAdmin />} />
+            <Route path="/dashboard/admin/usuarios" element={<UsuariosAdmin />} />
+            <Route path="/dashboard/admin/auditoria" element={<AuditoriaAdmin />} />
           </Route>
         </Route>
 

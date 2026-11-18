@@ -164,6 +164,23 @@ input[type=checkbox]:disabled { opacity:.45; cursor:default; }
 .desktop-navigation__icon.mobile-navigation__icon { width:22px;height:22px; }
 .private-layout__content section[role=alert] > button { border:1px solid #e1e6ef;border-radius:12px;background:white;color:#1554d6;min-height:44px;padding:10px 16px;cursor:pointer;font:inherit;font-size:14px; }
 .empty-state h2,.private-layout__content section[role=alert] > h2 { font-size:18px;letter-spacing:-.4px; }.empty-state p,.private-layout__content section[role=alert] > p { color:#687282;font-size:14px;line-height:22px; }
+.admin-page { max-width:840px; margin:auto; }
+.admin-page__header { margin-bottom:16px; }
+.admin-page__eyebrow { margin:0 0 4px; color:#1554d6; font-size:12px; line-height:18px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; }
+.admin-page__header h1 { margin:0; font-size:28px; line-height:36px; letter-spacing:-.4px; }
+.admin-page__grid { display:grid; grid-template-columns:1fr; gap:12px; }
+.admin-card { display:grid; align-content:start; gap:12px; min-height:unset; padding:16px; border:1px solid var(--mc-line); border-radius:18px; background:#fff; box-shadow:var(--mc-shadow); }
+.admin-card h2 { margin:0; font-size:16px; line-height:22px; }
+.admin-card .empty-state { min-height:unset; display:block; margin:0; border:0; padding:0; }
+.admin-card .empty-state h2 { color:#687282; font-size:14px; line-height:20px; font-weight:600; }
+.admin-card .button { width:100%; margin-top:4px; }
+.private-layout__content > .page-transition > section:not(.admin-page) > .empty-state,
+.private-layout__content > .page-transition > .empty-state { margin:0 auto; max-width:840px; }
+.private-layout__content section > .empty-state:only-child { min-height:160px; align-content:center; }
+@media (min-width:768px) {
+  .admin-page__grid { grid-template-columns:1fr; }
+  .admin-card { min-height:unset; padding:20px; }
+}
 @media (hover:hover) {
   .button:hover:not(:disabled):not(.password-toggle) { filter:brightness(.98);box-shadow:0 4px 12px #233b6510;transform:translateY(-1px); }
   .password-toggle:hover { background:#f1f4fa; }
